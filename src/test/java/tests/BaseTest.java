@@ -1,13 +1,13 @@
 package tests;
 
 import com.codeborne.selenide.Configuration;
+import objects.Project;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.asserts.SoftAssert;
-import pages.HeaderPage;
 import pages.ProjectRepositoryPage;
 import pages.ProjectsListPage;
 import steps.LoginSteps;
@@ -19,6 +19,7 @@ import utils.PropertyReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codeborne.selenide.WebDriverRunner.getWebDriver;
 import static com.codeborne.selenide.WebDriverRunner.setWebDriver;
 
 public class BaseTest {
@@ -29,11 +30,11 @@ public class BaseTest {
     protected TestCaseSteps testCaseSteps;
     protected ProjectsListPage projectsListPage;
     SoftAssert softAssert;
+    Project project;
 
     public static String USER = PropertyReader.getProperty("user");
     public static String PASSWORD = PropertyReader.getProperty("password");
     public static String LOGIN_URL = PropertyReader.getProperty("loginUrl");
-    public static String PROJECT_LIST_URL = PropertyReader.getProperty("projectListUrl");
 
     public void initPages(){
         loginSteps = new LoginSteps();
@@ -42,7 +43,6 @@ public class BaseTest {
         projectRepositoryPage = new ProjectRepositoryPage();
         testCaseSteps = new TestCaseSteps();
         projectsListPage = new ProjectsListPage();
-        softAssert = new SoftAssert();
     }
 
     @BeforeMethod
@@ -60,11 +60,19 @@ public class BaseTest {
         Configuration.headless = false;
         Configuration.browserSize = "1024x768";
 
+        softAssert = new SoftAssert();
+        project = new Project();
+
         initPages();
     }
 
-//    @AfterMethod
-//    public void quitTest() {
-//        getWebDriver().quit();
-//    }
+    @AfterMethod(alwaysRun = true)
+    public void delete() {
+        projectsListPage.deleteProjectIfAlreadyExist(project);
+    }
+
+    @AfterMethod
+    public void quitTest() {
+        getWebDriver().quit();
+    }
 }

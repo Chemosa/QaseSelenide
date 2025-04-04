@@ -11,7 +11,7 @@ import static com.codeborne.selenide.Selenide.$;
 
 public class CreateTestCasePage {
 
-    public SelenideElement SAVE_TEST_CASE_BUTTON = $(By.id("save-case"));
+    private static final SelenideElement SAVE_TEST_CASE_BUTTON = $(By.id("save-case"));
 
     public CreateTestCasePage fillCreateTestCaseForm(TestCase testCase) {
         new Input("title").writeProjectFields(testCase.getTestTitle());

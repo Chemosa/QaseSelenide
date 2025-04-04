@@ -8,6 +8,10 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$x;
 
 public class Input {
+
+    private static final String TEST_CASE_FIELDS_XPATH = "//label[text()=\"%s\"]/parent::div//p/parent::div";
+    private static final String NEW_SUITE_FIELDS_XPATH = "//*[text() = \"%s\"]/../following-sibling::div";
+
     String label;
     public String inputLocator = "//*[@name='%s']";
 
@@ -33,8 +37,13 @@ public class Input {
     }
 
     public Input writeTestCaseFields(String text) {
-//        $x(String.format("//label[text()=\"%s\"]/following-sibling::div", label)).click();
-        $x(String.format("//label[text()=\"%s\"]/parent::div//p/parent::div", label)).setValue(text);
+        $x(String.format(TEST_CASE_FIELDS_XPATH, label)).setValue(text);
+        return this;
+    }
+
+    public Input writeSuiteFields(String text) {
+        $x(String.format(NEW_SUITE_FIELDS_XPATH, label)).click();
+        $x(String.format(NEW_SUITE_FIELDS_XPATH, label)).setValue(text);
         return this;
     }
 }

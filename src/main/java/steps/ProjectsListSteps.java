@@ -36,5 +36,4 @@ public class ProjectsListSteps extends BaseSteps {
                 .deleteProject(projectName);
         return new ProjectsListSteps();
     }
-
 }

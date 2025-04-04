@@ -1,19 +1,15 @@
 package steps;
 
-import com.codeborne.selenide.Condition;
 import io.qameta.allure.Step;
+import objects.Project;
+import objects.Suite;
 import pages.NewSuiteModalPage;
 import pages.ProjectRepositoryPage;
 import pages.ProjectsListPage;
 
-import java.time.Duration;
-
-import static com.codeborne.selenide.Selenide.$x;
 import static com.codeborne.selenide.Selenide.sleep;
 
 public class SuiteSteps extends BaseSteps{
-
-    private static String DELETE_SUITE_BUTTON = "//h3[text()=\"%s\"]/parent::div//button[@aria-label=\"Delete suite\"]";
 
     ProjectsListPage projectsListPage;
     ProjectRepositoryPage projectRepositoryPage;
@@ -26,24 +22,24 @@ public class SuiteSteps extends BaseSteps{
     }
 
     @Step
-    public SuiteSteps addSuiteInProject(String projectName, String suiteName, String description, String preconditions) {
+    public SuiteSteps addSuiteInProject(Project project, Suite suite) {
         projectsListPage
-                .openProject(projectName)
+                .openProject(project.getProjectName())
                 .isOpened()
                 .clickAddSuiteButton()
-                .fillCreateSuiteModalWindow(suiteName, description, preconditions)
-                .isOpened();
-        $x(String.format(DELETE_SUITE_BUTTON, suiteName)).shouldBe(Condition.visible, Duration.ofSeconds(10));
+                .fillCreateSuiteModalWindow(suite.getSuiteName(), suite.getDescription(), suite.getPreconditions())
+                .isOpened()
+                .waitSuiteIsDisplayed(suite.getSuiteName());
         return new SuiteSteps();
     }
 
     @Step
-    public SuiteSteps createSuiteFromSuite(String suiteName, String description, String preconditions) {
+    public SuiteSteps createSuiteFromSuite(Suite suite) {
         projectRepositoryPage
                 .clickCreateSuiteButton()
-                .fillCreateSuiteModalWindow(suiteName, description, preconditions)
-                .isOpened();
-        $x(String.format(DELETE_SUITE_BUTTON, suiteName)).shouldBe(Condition.visible, Duration.ofSeconds(10));
+                .fillCreateSuiteModalWindow(suite.getSuiteName(), suite.getDescription(), suite.getPreconditions())
+                .isOpened()
+                .waitSuiteIsDisplayed(suite.getSuiteName());
         return new SuiteSteps();
     }
 

@@ -14,7 +14,6 @@ public class TestCaseSteps {
     public TestCaseSteps() {
         createTestCasePage = new CreateTestCasePage();
         projectRepositoryPage = new ProjectRepositoryPage();
-
     }
 
     @Step

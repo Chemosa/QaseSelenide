@@ -2,19 +2,18 @@ package pages;
 
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
-
+import objects.Project;
 import java.time.Duration;
 
-import static com.codeborne.selenide.Selenide.$x;
+import static com.codeborne.selenide.Selenide.*;
 
-public class ProjectsListPage extends BasePage{
+public class ProjectsListPage extends HeaderPage{
     private static final SelenideElement CREATE_NEW_PROJECT = $x("//*[text() = 'Create new project']");
     private static final SelenideElement REMOVE_PROJECT_BUTTON = $x("//*[@data-testid=\"remove\"]");
     private static final SelenideElement DELETE_PROJECT_BUTTON = $x("//span[text() = \"Delete project\"]");
-    private String PROJECT_OPTIONS = "//table//a[text() = '%s']/ancestor::tr//button[@aria-label = \"Open action menu\"]";
-    private String PROJECT_NAME = "//a[text() = \"%s\"]";
-
-
+    private static final String PROJECT_OPTIONS = "//table//a[text() = '%s']/ancestor::tr//button[@aria-label = \"Open action menu\"]";
+    private static final String PROJECT_NAME = "//a[text() = \"%s\"]";
+    private static final SelenideElement CLOSE_UPGRADE_WINDOW_BUTTON = $x("//*[@data-icon=\"xmark\"]");
 
     public ProjectsListPage isOpened() {
         CREATE_NEW_PROJECT.shouldBe(Condition.visible, Duration.ofSeconds(30));
@@ -43,5 +42,21 @@ public class ProjectsListPage extends BasePage{
         return new ProjectRepositoryPage();
     }
 
+    public boolean projectIsPresentInList (Project project) {
+        sleep(3000);
+        boolean isInList = $x(String.format(PROJECT_NAME, project.getProjectName())).isDisplayed();
+        return isInList;
+    }
 
+    public ProjectsListPage deleteProjectIfAlreadyExist(Project project) {
+        if (CLOSE_UPGRADE_WINDOW_BUTTON.isDisplayed()) {
+                CLOSE_UPGRADE_WINDOW_BUTTON.click();
+        }
+        clickProjectsButton();
+        sleep(3000);
+        if ($x(String.format(PROJECT_NAME, project.getProjectName())).isDisplayed()) {
+            deleteProject(project.getProjectName());
+        }
+        return new ProjectsListPage();
+    }
 }

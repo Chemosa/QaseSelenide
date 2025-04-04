@@ -12,7 +12,7 @@ import static com.codeborne.selenide.Selenide.$x;
 public class NewProjectModalPage extends BasePage{
     private static final SelenideElement CREATE_PROJECT = $x("//span[text() = 'Create project']/ancestor::button");
     private static final SelenideElement CANCEL = $x("//span[text() = 'Cancel']/ancestor::button");
-    private String GROUP_NAME = "//*[text() = \"%s\"]";
+    private static final String GROUP_NAME_XPATH = "//*[text() = \"%s\"]";
 
     public NewProjectModalPage fillNewProjectModalWindow(Project project) {
         new Input("project-name").writeProjectFields(project.getProjectName());

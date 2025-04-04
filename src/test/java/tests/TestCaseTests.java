@@ -1,17 +1,13 @@
 package tests;
 
-import objects.Project;
+import objects.Suite;
 import objects.TestCase;
-import org.testng.Assert;
 import org.testng.annotations.Test;
-
-import static com.codeborne.selenide.Selenide.$x;
 
 public class TestCaseTests extends BaseTest {
 
     @Test
     public void createNewTest() {
-        Project project = new Project();
         project.setProjectName("Create Test Project");
         project.setProjectCode("CTP");
         project.setProjectDescription("Project description");
@@ -38,22 +34,25 @@ public class TestCaseTests extends BaseTest {
                 .openProject(project.getProjectName());
         testCaseSteps
                 .createNewTest(testCase);
-        softAssert.assertTrue($x(String.format("//*[text() = \"%s\"]", testCase.getTestTitle())).isDisplayed());
-        softAssert.assertEquals($x("//label[@for=\"0-description\"]/parent::section//p").getText(), testCase.getTestDescription());
-        softAssert.assertEquals($x("//label[@for=\"0-preconditions\"]/parent::section//p").getText(), testCase.getTestPreconditions());
-        softAssert.assertEquals($x("//label[@for=\"0-postconditions\"]/parent::section//p").getText(), testCase.getTestPostconditions());
+        softAssert.assertTrue(projectRepositoryPage.testCaseIsDisplayed(testCase));
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-description"), testCase.getTestDescription());
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-preconditions"), testCase.getTestPreconditions());
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-postconditions"), testCase.getTestPostconditions());
         testCaseSteps
                 .deleteTestCase();
-        softAssert.assertFalse($x(String.format("//*[text() = \"%s\"]", testCase.getTestTitle())).isDisplayed());
+        softAssert.assertFalse(projectRepositoryPage.testCaseIsDisplayed(testCase));
     }
 
     @Test
     public void createTestInSuite() {
-        Project project = new Project();
         project.setProjectName("Create Test Project1");
         project.setProjectCode("CTPx");
         project.setProjectDescription("Project description1");
         project.setProjectAccessType("Public");
+        Suite suite = new Suite();
+        suite.setSuiteName("Test Suite1");
+        suite.setDescription("Description for suite");
+        suite.setPreconditions("Nothing");
         TestCase testCase = new TestCase();
         testCase.setTestTitle("Test Title1");
         testCase.setTestStatus("Draft");
@@ -72,17 +71,16 @@ public class TestCaseTests extends BaseTest {
                 .login(USER, PASSWORD, LOGIN_URL);
         projectsListSteps
                 .createNewProject(project);
-        suiteSteps.addSuiteInProject(project.getProjectName(),
-                "Test Suite1",
-                "Description for suite",
-                "Nothing");
-        testCaseSteps.createCase(testCase);
-        softAssert.assertTrue($x(String.format("//*[text() = \"%s\"]", testCase.getTestTitle())).isDisplayed());
-        softAssert.assertEquals($x("//label[@for=\"0-description\"]/parent::section//p").getText(), testCase.getTestDescription());
-        softAssert.assertEquals($x("//label[@for=\"0-preconditions\"]/parent::section//p").getText(), testCase.getTestPreconditions());
-        softAssert.assertEquals($x("//label[@for=\"0-postconditions\"]/parent::section//p").getText(), testCase.getTestPostconditions());
+        suiteSteps
+                .addSuiteInProject(project, suite);
+        testCaseSteps
+                .createCase(testCase);
+        softAssert.assertTrue(projectRepositoryPage.testCaseIsDisplayed(testCase));
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-description"), testCase.getTestDescription());
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-preconditions"), testCase.getTestPreconditions());
+        softAssert.assertEquals(projectRepositoryPage.testCaseFieldText("0-postconditions"), testCase.getTestPostconditions());
         testCaseSteps
                 .deleteTestCase();
-        softAssert.assertFalse($x(String.format("//*[text() = \"%s\"]", testCase.getTestTitle())).isDisplayed());
+        softAssert.assertFalse(projectRepositoryPage.testCaseIsDisplayed(testCase));
     }
 }
